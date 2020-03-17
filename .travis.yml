@@ -38,7 +38,7 @@ script:
   - pylint3 --errors-only smtpwrapper/*.py
 
   - echo "pytest ... "
-  - pytest-3 test/unit/*.py
+  - py.test-3 test/unit/*.py
  
   - echo "run smtpwrapper.py ... "
   - python3 smtpwrapper/smtpwrapper.py
