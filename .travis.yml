@@ -23,9 +23,8 @@ branches:
   - feature/*
 
 install:
-  - sudo apt-get install -y python3-pip pylint3 python3
+  - sudo apt-get install -y python3-pip pylint3 python3 python3-pytest
   - sudo pip3 install --upgrade pip
-  - sudo pip3 install -U pytest
   - sudo pip3 install -r requirements.txt
 
 before_script:
@@ -38,7 +37,7 @@ script:
   - pylint3 --errors-only smtpwrapper/*.py
 
   - echo "pytest ... "
-  - pytest
+  - pytest-3 test/unit/basic_test.py
  
   - echo "run smtpwrapper.py ... "
   - python3 smtpwrapper/smtpwrapper.py
