@@ -2,11 +2,11 @@ sudo: required
 language: python
 python:
   - "3.5"
-#  - "3.6"      # current default Python on Travis CI
-#  - "3.7"
-#  - "3.7-dev"  # 3.7 development branch
-#  - "3.8-dev"  # 3.8 development branch
-#  - "nightly"  # nightly build
+  - "3.6"      # current default Python on Travis CI
+  - "3.7"
+  - "3.7-dev"  # 3.7 development branch
+  - "3.8-dev"  # 3.8 development branch
+  - "nightly"  # nightly build
 
 services:
   - mysql
@@ -37,7 +37,7 @@ script:
   - pylint3 --errors-only smtpwrapper/*.py
 
   - echo "pytest ... "
-  - pytest-3 test/unit/basic_test.py
+  - pytest-3 test/unit/*.py
  
   - echo "run smtpwrapper.py ... "
   - python3 smtpwrapper/smtpwrapper.py
