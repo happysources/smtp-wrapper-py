@@ -23,7 +23,7 @@ branches:
   - feature/*
 
 install:
-  - sudo apt-get install -y python3-pip pylint3 python3 python3-pytest
+  - sudo apt-get install -y python3-pip pylint3 python3 python3-pytest exim4
   - sudo pip3 install --upgrade pip
   - sudo pip3 install -r requirements.txt
   - sudo dpkg -L python3-pytest
