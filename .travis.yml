@@ -1,0 +1,47 @@
+sudo: required
+language: python
+python:
+  - "3.5"
+#  - "3.6"      # current default Python on Travis CI
+#  - "3.7"
+#  - "3.7-dev"  # 3.7 development branch
+#  - "3.8-dev"  # 3.8 development branch
+#  - "nightly"  # nightly build
+
+services:
+  - mysql
+
+env:
+  - PYTHONPATH=$PYTHONPATH:/usr/lib/python3/dist-packages/:/usr/local/lib/python3/dist-packages/:$PWD:$PWD/smtpwrapper/
+
+#cache: pip
+
+branches:
+  only:
+  - master
+  - develop
+  - feature/*
+
+install:
+  - sudo apt-get install -y python3-pip pylint3 python3
+  - sudo pip3 install --upgrade pip
+  - sudo pip3 install -U pytest
+  - sudo pip3 install -r requirements.txt
+
+before_script:
+  - wget -O - https://raw.githubusercontent.com/erikni/logni.py/develop/setup.sh | bash
+  - export PYTHONPATH=$PYTHONPATH:/usr/lib/python3/dist-packages/:$PWD:$PWD/smtpwrapper/
+
+# command to run tests
+script:
+  - echo "pylint3 --errors-only smtpwrapper/*.py ... "
+  - pylint3 --errors-only smtpwrapper/*.py
+
+  - echo "pytest ... "
+  - pytest
+ 
+  - echo "run smtpwrapper.py ... "
+  - python3 smtpwrapper/smtpwrapper.py
+
+  - echo "run examples ... "
+  - python3 test/example/basic_example.py
