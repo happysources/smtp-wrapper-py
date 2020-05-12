@@ -7,6 +7,7 @@ SMTP wrapper
 
 import smtplib
 import time
+from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from logni import log
@@ -19,7 +20,6 @@ class SMTPwrapper(object):
 	user_agent = 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) '\
 		'Gecko/20100101 Thunderbird/60.7.0 Lightning/6.2.7'
 	x_mailer = 'smtpwrapper-py'
-	content_type = 'plain'
 	charset = 'utf-8'
 
 	def __init__(self, smtp='localhost:25'):
@@ -43,7 +43,7 @@ class SMTPwrapper(object):
 		return True
 
 
-	def send(self, sender_email, receivers, subject, message, sender_name=None, content_type=None):
+	def send(self, sender_email, receivers, subject, html, txt=None, sender_name=None):
 		""" simple send mail """
 
 		if not self.connection:
@@ -66,18 +66,17 @@ class SMTPwrapper(object):
 		if not subject:
 			subject = '(no subject)'
 
-		if not message:
+		if txt or html:
+			pass
+		else:
 			log.error('Sendmail ERR message must be a input', priority=2)
 			return False
-
-		if not content_type:
-			content_type = self.content_type
 
 		sender = '%s <%s>' % (sender_email.split('@')[0], sender_email)
 		if sender_name:
 			sender = '%s <%s>' % (sender_name, sender_email)
 
-		msg = MIMEText(message, content_type, _charset=self.charset)
+		msg = MIMEMultipart('alternative')
 		msg['Date'] = time.strftime('%a, %d %b %Y %H:%M:%S', time.localtime(time.time()))
 		msg['Subject'] = subject
 		msg['From'] = sender
@@ -87,8 +86,18 @@ class SMTPwrapper(object):
 		msg['User-Agent'] = self.user_agent
 		msg['X-mailer'] = self.x_mailer
 
-		log.debug('Sendmail message %s', msg)
+		# Record the MIME types of both parts - text/plain and text/html.
+		part_plain = MIMEText(txt, 'plain', _charset=self.charset)
+		part_html = MIMEText(html, 'html', _charset=self.charset)
 
+		# Attach parts into message container.
+		# According to RFC 2046, the last part of a multipart message, in this case
+		# the HTML message, is best and preferred.
+		if txt:
+			msg.attach(part_plain)
+		msg.attach(part_html)
+
+		log.debug('Sendmail message %s', msg)
 		return self.__sendmail(sender_email, receivers, msg.as_string())
 
 
@@ -103,7 +112,7 @@ class SMTPwrapper(object):
 
 			return False
 
-		log.error('Sendmail OK from=%s, to=%s, len=%s',\
+		log.info('Sendmail OK from=%s, to=%s, len=%s',\
 			(sender_email, receivers, len(msg_string)), priority=2)
 
 		return True
@@ -117,5 +126,4 @@ if __name__ == '__main__':
 	log.stderr(1)
 
 	SMTP = SMTPwrapper()
-	SMTP.user_agent = 'test agent'
-	SMTP.send('erik+test@brozek.name', ['erik@seznam.cz',], 'Test %s' % TS, 'Test email %s' % TS)
+	SMTP.send('erik+test@4.house', ['erik@seznam.cz',], 'Test %s' % TS, '<b>Test email %s</b>' % TS)
