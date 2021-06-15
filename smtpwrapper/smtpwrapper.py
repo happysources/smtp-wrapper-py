@@ -5,6 +5,7 @@
 SMTP wrapper
 """
 
+# pylint: disable=too-few-public-methods
 import smtplib
 import time
 from email.mime.multipart import MIMEMultipart
@@ -13,7 +14,7 @@ from email.mime.text import MIMEText
 from logni import log
 
 
-class SMTPwrapper(object):
+class SMTPwrapper:
 	""" SMTP wrapper """
 
 	reply_to = None
@@ -39,7 +40,7 @@ class SMTPwrapper(object):
 			log.error('Smtp=%s connect err=%s', (smtp, base_err), priority=2)
 			return False
 
-		log.error('Smtp=%s connect ok', (smtp,))
+		log.info('Smtp=%s connect OK', (smtp,))
 		return True
 
 
@@ -114,7 +115,6 @@ class SMTPwrapper(object):
 
 		log.info('Sendmail OK from=%s, to=%s, len=%s',\
 			(sender_email, receivers, len(msg_string)), priority=2)
-
 		return True
 
 

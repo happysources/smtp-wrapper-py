@@ -1,5 +1,9 @@
 [FORMAT]
 indent-string=\t
+max-line-length=100
 
 [MASTER]
 init-hook='import sys; sys.path.append("/usr/local/lib/python3/dist-packages"); sys.path.append("smtpwrapper/");'
+
+[DESIGN]
+max-args=7
