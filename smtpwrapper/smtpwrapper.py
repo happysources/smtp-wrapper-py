@@ -14,14 +14,18 @@ from email.mime.text import MIMEText
 from logni import log
 
 
+SMTP_CHARSET = 'utf-8'
+SMTP_MAILER = 'smtpwrapper-py'
+SMTP_AGENT = 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101 Thunderbird/60.7.0 Lightning/6.2.7'
+
+
 class SMTPwrapper:
 	""" SMTP wrapper """
 
 	reply_to = None
-	user_agent = 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) '\
-		'Gecko/20100101 Thunderbird/60.7.0 Lightning/6.2.7'
-	x_mailer = 'smtpwrapper-py'
-	charset = 'utf-8'
+	user_agent = SMTP_AGENT
+	x_mailer = SMTP_MAILER
+	charset = SMTP_CHARSET
 
 	def __init__(self, smtp='localhost:25'):
 
@@ -73,9 +77,10 @@ class SMTPwrapper:
 			log.error('Sendmail ERR message must be a input', priority=2)
 			return False
 
-		sender = '%s <%s>' % (sender_email.split('@')[0], sender_email)
+		# sender name
+		sender = '"%s" <%s>' % (sender_email.split('@')[0], sender_email)
 		if sender_name:
-			sender = '%s <%s>' % (sender_name, sender_email)
+			sender = '"%s" <%s>' % (sender_name, sender_email)
 
 		msg = MIMEMultipart('alternative')
 		msg['Date'] = time.strftime('%a, %d %b %Y %H:%M:%S', time.localtime(time.time()))
@@ -126,4 +131,7 @@ if __name__ == '__main__':
 	log.stderr(1)
 
 	SMTP = SMTPwrapper()
-	SMTP.send('erik+test@4.house', ['erik@seznam.cz',], 'Test %s' % TS, '<b>Test email %s</b>' % TS)
+	SMTP.send('erik+test@4.house', ['erik@seznam.cz',],\
+		subject='Test %s' % TS,\
+		html='<b>Test email %s</b>' % TS,\
+		sender_name='Test Mail (%s)' % TS)
