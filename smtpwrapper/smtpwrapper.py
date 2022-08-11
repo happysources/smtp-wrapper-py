@@ -16,7 +16,8 @@ from logni import log
 
 SMTP_CHARSET = 'utf-8'
 SMTP_MAILER = 'smtpwrapper-py'
-SMTP_AGENT = 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101 Thunderbird/60.7.0 Lightning/6.2.7'
+SMTP_AGENT = 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101 '\
+	'Thunderbird/60.7.0 Lightning/6.2.7'
 
 
 class SMTPwrapper:
@@ -31,6 +32,7 @@ class SMTPwrapper:
 
 		# connect to smtp server
 		self.__connect(smtp)
+		self.__smtp = smtp
 
 
 	def __connect(self, smtp):
@@ -51,6 +53,8 @@ class SMTPwrapper:
 	def send(self, sender_email, receivers, subject, html, txt=None, sender_name=None):
 		""" simple send mail """
 
+		if not self.connection:
+			self.__connect(self.__smtp)
 		if not self.connection:
 			log.error('Sendmail ERR from=%s, to=%s, err=connect error',\
 				(sender_email, receivers,), priority=2)
